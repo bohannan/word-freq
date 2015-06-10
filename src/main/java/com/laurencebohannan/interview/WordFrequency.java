@@ -20,7 +20,7 @@ public class WordFrequency
     {
         String inputText = null;
         //common punctuations and char that were in the file.
-        String regEx = "[,|(|)|\"|\"|\\.|—\\s||–^\\s|»|«|\\[|\\]|↑|:|;|0-9|-]";
+        String regEx = "[\\p{P}&&[^\u0027|\u002D]]|[0-9]+-*|»|«|º|↑|\\s'";
 
         // Get String of input text from source
         InputHandler inputHandler = new InputHandler();
@@ -40,13 +40,13 @@ public class WordFrequency
 
             // create a map of unique words and number of appearances
             Map<String,Integer> wordFreqMap = new HashMap<String,Integer>();
+            Integer count;
             for (String s: words){
-                if(wordFreqMap.containsKey(s)){
-                    int count = wordFreqMap.get(s);
-                    wordFreqMap.put(s, ++count);
-                } else {
-                    wordFreqMap.put(s,1);
+                count = wordFreqMap.get(s);
+                if(count == null) {
+                    count = 0;
                 }
+                wordFreqMap.put(s, ++count);
             }
 
             // place map structure into a simple list data structure
@@ -56,16 +56,19 @@ public class WordFrequency
                 wordlist.add(new WordStat(s, wordCount));
             }
 
+            int uniqueWordCount = wordlist.size();
+            System.out.println("Unique word count: "+uniqueWordCount);
+
             // sort it by Rank
             Collections.sort(wordlist, new SequenceComparable()) ;
 
             //Display
             Integer rank = 0;
-            System.out.format("%s\t%s\t%s\t%s\n","Rank","Word","Count","Relative Freq. %");
+            System.out.format("%s\t%s\t%s\t%s\n","Rank","Word","Count","Frequency");
             for (WordStat wordStats : wordlist){
                 ++rank;
-                System.out.format("%d\t%s\t%d\t%.3f%n", rank, wordStats.getWord(), wordStats.getCount(),
-                        wordStats.getRelativeFrequency(totalWordCount) * 100);
+                System.out.format("%d\t%s\t%d\t%.9f%n", rank, wordStats.getWord(), wordStats.getCount(),
+                        wordStats.getRelativeFrequency(uniqueWordCount));
                 if(rank.equals(100)) break;
             }
         }

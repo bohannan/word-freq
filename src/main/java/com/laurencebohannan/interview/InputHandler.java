@@ -9,12 +9,15 @@ import java.nio.file.Files;
  * Created by bohannan on 6/7/15.
  */
 public class InputHandler {
+
+    public static final String UTF_8 = "UTF-8";
+
     public String open(String fileName) {
         URL inputStream = getClass().getResource(fileName);
         StringBuilder out = new StringBuilder();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(inputStream.openStream()));
+            reader = new BufferedReader(new InputStreamReader(inputStream.openStream(), UTF_8));
             String line;
 
 
@@ -42,11 +45,9 @@ public class InputHandler {
         System.out.println("Opening file: "+file);
 
         try {
-            // FileReader reads text files in the default encoding.
-            FileReader fileReader = new FileReader(file);
-
-            // Always wrap FileReader in BufferedReader.
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            // FileInputStream reads text files in the default encoding.
+            FileInputStream fileInputStream = new FileInputStream(file);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream, UTF_8));
 
             while((line = bufferedReader.readLine()) != null) {
                 output.append(line);
@@ -56,10 +57,10 @@ public class InputHandler {
             bufferedReader.close();
         }
         catch(FileNotFoundException ex) {
-            System.out.println("Unable to open file '" + file + "'");
+            System.err.println("Unable to open file '" + file + "'");
         }
         catch(IOException ex) {
-            System.out.println("Error reading file '" + file + "'");
+            System.err.println("Error reading file '" + file + "'");
         }
         return output.toString();
     }

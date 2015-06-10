@@ -43,7 +43,7 @@ public class WordStat {
     @Override
     public int hashCode() {
         int result = word.hashCode();
-        result = 31 * result;
+        result = 31 * result + count;
         return result;
     }
 }
